@@ -11,11 +11,15 @@ from aiogram.filters import Command
 from aiogram.types import Message, CallbackQuery
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
-BOT_TOKEN = "PASTE_TOKEN_HERE"
-DB_PATH = "exchange.db"
+import os
 
-# Впиши сюда свой Telegram numeric id (узнать можно у @userinfobot)
-ADMIN_IDS = {123456789}
+BOT_TOKEN = os.getenv("BOT_TOKEN")
+if not BOT_TOKEN:
+   raise RuntimeError("BOT_TOKEN env var is not set")
+
+ADMIN_IDS = {int(x) for x in os.getenv("ADMIN_IDS", "").split(",") if x.strip()}
+
+DB_PATH = os.getenv("DB_PATH", "exchange.db")
 
 ASSETS = ["USD", "BTC", "ETH", "SOL", "BNB", "XRP", "TON"]
 CRYPTO = ["BTC", "ETH", "SOL", "BNB", "XRP", "TON"]
