@@ -13,7 +13,7 @@ from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 import os
 
-BOT_TOKEN = (8421577436:AAE8bStcM2qVxtwrJUnH0Kw8bu0QN5agjDc)
+BOT_TOKEN = ("8421577436:AAE8bStcM2qVxtwrJUnH0Kw8bu0QN5agjDc")
 
 ADMIN_IDS = (6339108316) 
 
