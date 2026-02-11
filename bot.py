@@ -355,19 +355,12 @@ async def cb_redeem(c: CallbackQuery):
    await c.answer()
 
 
-@dp.callback_query(F.data == "m:tickets")
-async def cb_tickets(c: CallbackQuery):
-   async with aiosqlite.connect(DB_PATH) as db:
-     u = await get_user_by_tg(db, c.from_user.id)
-     if not u:
-       await c.answer("Сначала /start", show_alert=True)
-       return
-   await c.message.edit_text("Тикеты:", reply_markup=kb_tickets())
-   await c.answer()
-  async def cb_admin_ticket_view(c: CallbackQuery):
+@dp.callback_query(F.data.startswith("at:view:"))
+async def cb_admin_ticket_view(c: CallbackQuery):
    if not is_admin(c.from_user.id):
      await c.answer("Нет доступа", show_alert=True)
      return
+
    tid = int(c.data.split(":")[-1])
 
    async with aiosqlite.connect(DB_PATH) as db:
