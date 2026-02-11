@@ -13,13 +13,11 @@ from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 import os
 
-BOT_TOKEN = os.getenv("BOT_TOKEN")
-if not BOT_TOKEN:
-   raise RuntimeError("BOT_TOKEN env var is not set")
+BOT_TOKEN = (8421577436:AAE8bStcM2qVxtwrJUnH0Kw8bu0QN5agjDc)
 
-ADMIN_IDS = {int(x) for x in os.getenv("ADMIN_IDS", "").split(",") if x.strip()}
+ADMIN_IDS = (6339108316) 
 
-DB_PATH = os.getenv("DB_PATH", "exchange.db")
+DB_PATH = ("exchange.db")
 
 ASSETS = ["USD", "BTC", "ETH", "SOL", "BNB", "XRP", "TON"]
 CRYPTO = ["BTC", "ETH", "SOL", "BNB", "XRP", "TON"]
