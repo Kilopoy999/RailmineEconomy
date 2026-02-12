@@ -460,33 +460,35 @@ async def cb_admin_ticket_reject(c: CallbackQuery):
 # ---------------- Text handler for pending actions ----------------
 @dp.message(F.text)
 async def on_text(m: Message):
-   pend = PENDING.get(m.from_user.id)
-   if not pend:
-     # если человек просто пишет — покажем меню
-     await m.answer("Открой меню: /menu", reply_markup=kb_main(is_admin(m.from_user.id)))
-     return
+pend = PENDING.get(m.from_user.id)
+if not pend:
+   # если человек просто пишет — покажем меню
+   await m.answer("Открой меню: /menu", reply_markup=kb_main(is_admin(m.from_user.id)))
+   return
 
-   try:
-     if pend.action == "register":
-       if len(m.text.split()) < 2:
-         await m.answer("Нужно: `login bank_id`", parse_mode="Markdown")
+try:
+   if pend.action == "register":
+     if len(m.text.split()) < 2:
+       await m.answer("Нужно: login bank_id", parse_mode="Markdown")
+       return
+
+     login, bank_id = m.text.split(maxsplit=1)
+     bank_id = bank_id.strip()
+
+     async with aiosqlite.connect(DB_PATH) as db:
+       if await get_user_by_tg(db, m.from_user.id):
+         PENDING.pop(m.from_user.id, None)
+         await m.answer("Ты уже зарегистрирован.", reply_markup=kb_main(is_admin(m.from_user.id)))
          return
-       login, bank_id = m.text.split(maxsplit=1)
-       bank_id = bank_id.strip()
 
-       async with aiosqlite.connect(DB_PATH) as db:
-         if await get_user_by_tg(db, m.from_user.id):
-           PENDING.pop(m.from_user.id, None)
-           await m.answer("Ты уже зарегистрирован.", reply_markup=kb_main(is_admin(m.from_user.id)))
-           return
-         if await get_user_by_bank_id(db, bank_id):
-          await m.answer("Этот bank_id уже занят. Выбери другой.")
-           return
-         
-         await db.execute(
-           "INSERT INTO users(tg_id, login, bank_id, created_at) VALUES (?, ?, ?, ?)",
-           (m.from_user.id, login, bank_id, now_ts())
-         )
+       if await get_user_by_bank_id(db, bank_id):
+         await m.answer("Этот bank_id уже занят. Выбери другой.")
+         return
+
+       await db.execute(
+         "INSERT INTO users(tg_id, login, bank_id, created_at) VALUES (?, ?, ?, ?)",
+         (m.from_user.id, login, bank_id, now_ts())
+       )
          # Баланс 0, только через чеки/тикеты
          await add_balance(db, m.from_user.id, "USD", 0.0)
          for a in CRYPTO:
