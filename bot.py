@@ -480,8 +480,9 @@ async def on_text(m: Message):
            await m.answer("Ты уже зарегистрирован.", reply_markup=kb_main(is_admin(m.from_user.id)))
            return
          if await get_user_by_bank_id(db, bank_id):
-                      await m.answer("Этот bank_id уже занят. Выбери другой.")
+          await m.answer("Этот bank_id уже занят. Выбери другой.")
            return
+         
          await db.execute(
            "INSERT INTO users(tg_id, login, bank_id, created_at) VALUES (?, ?, ?, ?)",
            (m.from_user.id, login, bank_id, now_ts())
